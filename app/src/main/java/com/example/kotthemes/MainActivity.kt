@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
 
+    //contor pentru a numara cate permisiuni acceptate avem
     var permNumber = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,42 +18,40 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
+        //instantiere butoane
         val startButtonRef: Button = findViewById(R.id.startButton)
         val stopButtonRef: Button = findViewById(R.id.stopButton)
         val replayButtonRef: Button = findViewById(R.id.replayButton)
         val permButtonRef: Button = findViewById(R.id.permButton)
 
+        //butoanele nu pot fi apasate pana nu verificam daca avem permisiunile de recording si stocare
         startButtonRef.isEnabled = false
         stopButtonRef.isEnabled = false
         replayButtonRef.isEnabled = false
 
+        //verificam daca avem permisiunile de recording si stocare
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) permNumber += 1
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) permNumber += 1
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) permNumber += 1
 
+        //apasam butonul de request permissions
         permButtonRef?.setOnClickListener{
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 100)
+
+            //orice permisiune ne-ar lipsi, facem request sa primim toate permisiunile
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE), 100)
             else {
-                println("Recording Permission Already Granted")
+                //in cazul in care avem deja permisiunile la apasarea butonului
+                permNumber=3
+                println("Permissions Already Granted")
             }
 
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 101)
-            else {
-                println("Storage Write Permission Already Granted")
-            }
-
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 101)
-            else {
-                println("Storage Read Permission Already Granted")
-            }
 
         }
 
-        println()
+        //verificam daca avem toate permisiunile necesare acceptate pentru a activa butoanele
         println(permNumber)
         if(permNumber==3){
             startButtonRef.isEnabled = true
@@ -67,6 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         val startButtonRef: Button = findViewById(R.id.startButton)
         val stopButtonRef: Button = findViewById(R.id.stopButton)
+        val replayButtonRef: Button = findViewById(R.id.replayButton)
 
         println("PERMISIUNILE")
         println(permissions)
@@ -78,22 +78,28 @@ class MainActivity : AppCompatActivity() {
                 permNumber += 1
             }
             else println("Recording Permission NOT Accepted")
-        }
-        else if(requestCode == 101){
-            if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED)
+
+            if(grantResults.isNotEmpty() && grantResults[1]==PackageManager.PERMISSION_GRANTED)
             {
                 println("Storage Write Permission Accepted")
                 permNumber += 1
             }
             else println("Storage Write Permission NOT Accepted")
-        }
-        else if(requestCode == 102){
-            if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED)
+
+            if(grantResults.isNotEmpty() && grantResults[2]==PackageManager.PERMISSION_GRANTED)
             {
                 println("Storage Read Permission Accepted")
                 permNumber += 1
             }
             else println("Storage Read Permission NOT Accepted")
+        }
+
+        //verificam daca avem toate permisiunile necesare acceptate pentru a activa butoanele
+        println(permNumber)
+        if(permNumber==3){
+            startButtonRef.isEnabled = true
+            stopButtonRef.isEnabled = true
+            replayButtonRef.isEnabled = true
         }
 
     }
