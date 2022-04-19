@@ -11,6 +11,9 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.jjoe64.graphview.GraphView
+import com.jjoe64.graphview.series.DataPoint
+import com.jjoe64.graphview.series.LineGraphSeries
 import java.io.IOException
 
 
@@ -21,7 +24,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
 
     //https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables pentru motiv lateinit
     //variabila de tip MediaRecorder
-     var mRecorder: MediaRecorder ?=null
+    lateinit var mRecorder: MediaRecorder
 
     //variabile de tip MediaPlayer
     lateinit var mPlayer: MediaPlayer
@@ -29,13 +32,57 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
     //variabila pentru numele fisierului de stocat
     lateinit var mFileName: String
 
+    //PLOT timer
     lateinit var timer: Timer
+    var recDuration = 0L
+
+    //PLOT audio amplitudes
+    var amplitudes = ArrayList<Int>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //instantiere timer
+        //GRAPH
+        //val graph = findViewById<View>(R.id.graph) as GraphView
+
+        var graph: GraphView = findViewById(R.id.graph)
+
+        var series: LineGraphSeries<DataPoint> = LineGraphSeries()
+
+//        var x: Double = 0.0
+//        var y: Double = 1.0
+//        var DP1 : DataPoint = DataPoint(x,y)
+//        series.appendData(DP1, true,90)
+//        x=1.0
+//        y=5.0
+//        DP1 = DataPoint(x,y)
+
+        var DP2: Array<DataPoint> = arrayOf(
+            DataPoint(0.0,5.0),
+            DataPoint(1.0,1.0),
+            DataPoint(2.0,3.0),
+            DataPoint(3.0,7.0),
+            DataPoint(4.0,4.0),
+            DataPoint(5.0,6.0),
+            DataPoint(6.0,2.0),
+            DataPoint(7.0,3.0),
+            DataPoint(8.0,9.0),
+            DataPoint(9.0,2.0),
+            DataPoint(10.0,9.0)
+        )
+
+        for (i:DataPoint in DP2){
+            series.appendData(i,true,90)
+        }
+        graph.viewport.setScrollableY(true)
+        graph.viewport.setScalableY(true)
+        graph.addSeries(series)
+
+        //GRAPH END --------------------------------------------------------------
+
+        //PLOT instantiere timer
         timer = Timer(this)
 
         //instantiere butoane
@@ -164,28 +211,28 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         mRecorder = MediaRecorder()
 
         //sursa sunetului
-        mRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
 
         //formatul fisierului audio
-        mRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         //setarea encoderului pentru fisierul audio
-        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         //setarea locatiei output-ului inregistrarii
-        mRecorder!!.setOutputFile(mFileName);
+        mRecorder?.setOutputFile(mFileName);
 
 
         //pregatim variabila de tip MediaRecorder pentru inregistrare
         try {
-            mRecorder!!.prepare()
+            mRecorder?.prepare()
         } catch (e: IOException) {
             Log.e("TAG", "prepare() failed")
         }
 
-        mRecorder!!.start();
+        mRecorder?.start();
         //schimbam culoarea titlului in rosu pentru a stii ca suntem in modul de recording
         textViewTitle.setTextColor(Color.parseColor("#ff5243"))
 
-        //pornim timerul
+        //PLOT pornim timerul
         timer.start()
     }
 
@@ -200,21 +247,28 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
 
     //oprirea inregistrarii
     fun stopRecording(){
-        mRecorder!!.stop()
-        mRecorder!!.release()
-        mRecorder = null
+        mRecorder?.stop()
+        mRecorder?.release()
+        //mRecorder = null
 
         val textViewTitle: TextView = findViewById(R.id.textTitle)
         textViewTitle.setTextColor(Color.parseColor("#808080"))
 
-        //oprim timerul
+        //PLOT oprim timerul
+        recDuration=timer.duration
         timer.stop()
+        println("Final Time " + recDuration)
+        println("Amp array length" + amplitudes.size)
+        println(amplitudes)
 
     }
 
-    //afisarea milisecundelor
+    //PLOT afisarea milisecundelor
     override fun OnTimerTick(duration: String) {
         println(duration)
+
+        //PLOT adaugam in vectorul de amplitudini esantioanele
+        amplitudes.add(mRecorder?.maxAmplitude)
     }
 
 }
