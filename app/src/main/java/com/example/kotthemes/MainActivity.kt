@@ -14,7 +14,7 @@ import androidx.core.app.ActivityCompat
 import java.io.IOException
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
 
     //contor pentru a numara cate permisiuni acceptate avem
     var permNumber = 0
@@ -29,10 +29,14 @@ class MainActivity : AppCompatActivity() {
     //variabila pentru numele fisierului de stocat
     lateinit var mFileName: String
 
+    lateinit var timer: Timer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //instantiere timer
+        timer = Timer(this)
 
         //instantiere butoane
         val startButtonRef: Button = findViewById(R.id.startButton)
@@ -181,14 +185,17 @@ class MainActivity : AppCompatActivity() {
         //schimbam culoarea titlului in rosu pentru a stii ca suntem in modul de recording
         textViewTitle.setTextColor(Color.parseColor("#ff5243"))
 
+        //pornim timerul
+        timer.start()
     }
 
     //redarea inregistrarii
     fun playRecording(){
         mPlayer = MediaPlayer()
         mPlayer.setDataSource(mFileName)
-        mPlayer.prepare();
-        mPlayer.start();
+        mPlayer.prepare()
+
+        mPlayer.start()
     }
 
     //oprirea inregistrarii
@@ -200,6 +207,14 @@ class MainActivity : AppCompatActivity() {
         val textViewTitle: TextView = findViewById(R.id.textTitle)
         textViewTitle.setTextColor(Color.parseColor("#808080"))
 
+        //oprim timerul
+        timer.stop()
+
+    }
+
+    //afisarea milisecundelor
+    override fun OnTimerTick(duration: String) {
+        println(duration)
     }
 
 }
