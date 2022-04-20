@@ -19,6 +19,9 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
 
+    //GRAPH
+    var series: LineGraphSeries<DataPoint> = LineGraphSeries()
+
     //contor pentru a numara cate permisiuni acceptate avem
     var permNumber = 0
 
@@ -32,57 +35,19 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
     //variabila pentru numele fisierului de stocat
     lateinit var mFileName: String
 
-    //PLOT timer
+    //TIMER timer
     lateinit var timer: Timer
     var recDuration = 0L
 
-    //PLOT audio amplitudes
+    //TIMER audio amplitudes
     var amplitudes = ArrayList<Int>()
-
+    var amplitudesTemp = ArrayList<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //GRAPH
-        //val graph = findViewById<View>(R.id.graph) as GraphView
-
-        var graph: GraphView = findViewById(R.id.graph)
-
-        var series: LineGraphSeries<DataPoint> = LineGraphSeries()
-
-//        var x: Double = 0.0
-//        var y: Double = 1.0
-//        var DP1 : DataPoint = DataPoint(x,y)
-//        series.appendData(DP1, true,90)
-//        x=1.0
-//        y=5.0
-//        DP1 = DataPoint(x,y)
-
-        var DP2: Array<DataPoint> = arrayOf(
-            DataPoint(0.0,5.0),
-            DataPoint(1.0,1.0),
-            DataPoint(2.0,3.0),
-            DataPoint(3.0,7.0),
-            DataPoint(4.0,4.0),
-            DataPoint(5.0,6.0),
-            DataPoint(6.0,2.0),
-            DataPoint(7.0,3.0),
-            DataPoint(8.0,9.0),
-            DataPoint(9.0,2.0),
-            DataPoint(10.0,9.0)
-        )
-
-        for (i:DataPoint in DP2){
-            series.appendData(i,true,90)
-        }
-        graph.viewport.setScrollableY(true)
-        graph.viewport.setScalableY(true)
-        graph.addSeries(series)
-
-        //GRAPH END --------------------------------------------------------------
-
-        //PLOT instantiere timer
+        //TIMER instantiere timer
         timer = Timer(this)
 
         //instantiere butoane
@@ -147,6 +112,52 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         replayButtonRef?.setOnClickListener {
             playRecording()
         }
+
+
+        //GRAPH
+
+        var graph: GraphView = findViewById(R.id.graph)
+
+        //var series: LineGraphSeries<DataPoint> = LineGraphSeries()
+
+//        var x: Double = 0.0
+//        var y: Double = 1.0
+//        var DP1 : DataPoint = DataPoint(x,y)
+//        series.appendData(DP1, true,90)
+//        x=1.0
+//        y=5.0
+//        DP1 = DataPoint(x,y)
+
+//        var DP2: Array<DataPoint> = arrayOf(
+//                DataPoint(0.0,5.0),
+//                DataPoint(1.0,1.0),
+//                DataPoint(2.0,3.0),
+//                DataPoint(3.0,7.0),
+//                DataPoint(4.0,4.0),
+//                DataPoint(5.0,6.0),
+//                DataPoint(6.0,2.0),
+//                DataPoint(7.0,3.0),
+//                DataPoint(8.0,9.0),
+//                DataPoint(9.0,2.0),
+//                DataPoint(10.0,9.0)
+//        )
+//
+//        for (i:DataPoint in DP2){
+//            series.appendData(i,true,90)
+//        }
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(-1.0);
+        graph.getViewport().setMaxY(12.0);
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0.0);
+        graph.getViewport().setMaxX(12.0);
+
+        graph.viewport.setScrollableY(true)
+        graph.viewport.setScalableY(true)
+        graph.addSeries(series)
+
+        //GRAPH END --------------------------------------------------------------
 
     }
 
@@ -232,7 +243,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         //schimbam culoarea titlului in rosu pentru a stii ca suntem in modul de recording
         textViewTitle.setTextColor(Color.parseColor("#ff5243"))
 
-        //PLOT pornim timerul
+        //TIMER pornim timerul
         timer.start()
     }
 
@@ -254,20 +265,49 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         val textViewTitle: TextView = findViewById(R.id.textTitle)
         textViewTitle.setTextColor(Color.parseColor("#808080"))
 
-        //PLOT oprim timerul
+        //TIMER oprim timerul
         recDuration=timer.duration
         timer.stop()
         println("Final Time " + recDuration)
-        println("Amp array length" + amplitudes.size)
+        println("Amp array length " + amplitudes.size)
         println(amplitudes)
+
+        //GRAPH
+        amplitudesTemp = amplitudes;
+
+        series=LineGraphSeries()
+        var DP1: DataPoint
+        var indexul:Int = 0
+        for (i:Int in amplitudesTemp){
+            println(indexul)
+            DP1=DataPoint(indexul.toDouble(),i.toDouble())
+            series.appendData(DP1,true,90)
+            indexul++
+        }
+
+
+        var graph: GraphView = findViewById(R.id.graph)
+
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(-1.0);
+        graph.getViewport().setMaxY(15000.0);
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0.0);
+        graph.getViewport().setMaxX(30.0);
+
+        graph.viewport.setScrollableY(true)
+        graph.viewport.setScalableY(true)
+
+        graph.addSeries(series)
 
     }
 
-    //PLOT afisarea milisecundelor
+    //TIMER afisarea milisecundelor
     override fun OnTimerTick(duration: String) {
         println(duration)
 
-        //PLOT adaugam in vectorul de amplitudini esantioanele
+        //TIMER adaugam in vectorul de amplitudini esantioanele
         amplitudes.add(mRecorder?.maxAmplitude)
     }
 
