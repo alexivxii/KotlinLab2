@@ -239,7 +239,9 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
             Log.e("TAG", "prepare() failed")
         }
 
-        mRecorder?.start();
+        amplitudes.clear()
+
+        mRecorder?.start()
         //schimbam culoarea titlului in rosu pentru a stii ca suntem in modul de recording
         textViewTitle.setTextColor(Color.parseColor("#ff5243"))
 
@@ -273,20 +275,26 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         println(amplitudes)
 
         //GRAPH
-        amplitudesTemp = amplitudes;
+        amplitudesTemp = amplitudes
 
         series=LineGraphSeries()
+
+        println("Series empty " + series.isEmpty)
+
         var DP1: DataPoint
         var indexul:Int = 0
         for (i:Int in amplitudesTemp){
-            println(indexul)
+            //println(indexul)
             DP1=DataPoint(indexul.toDouble(),i.toDouble())
             series.appendData(DP1,true,90)
             indexul++
         }
 
+        println("Numar esantioane: "+indexul)
 
         var graph: GraphView = findViewById(R.id.graph)
+
+        graph.removeAllSeries()
 
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(-1.0);
@@ -297,7 +305,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         graph.getViewport().setMaxX(30.0);
 
         graph.viewport.setScrollableY(true)
-        graph.viewport.setScalableY(true)
+        graph.viewport.setScalable(true)
 
         graph.addSeries(series)
 
