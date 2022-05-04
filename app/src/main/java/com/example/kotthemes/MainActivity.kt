@@ -141,8 +141,8 @@ class MainActivity : AppCompatActivity() {
         println(permNumber)
         if(permNumber==3){
             startButtonRef.isEnabled = true
-            stopButtonRef.isEnabled = true
-            replayButtonRef.isEnabled = true
+            stopButtonRef.isEnabled = false
+            replayButtonRef.isEnabled = false
         }
 
     }
