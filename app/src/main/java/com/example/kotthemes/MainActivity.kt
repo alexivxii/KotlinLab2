@@ -1,6 +1,8 @@
 package com.example.kotthemes
 
 import android.Manifest
+import android.R.attr.key
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.MediaPlayer
@@ -159,6 +161,18 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
 
         //GRAPH END --------------------------------------------------------------
 
+        //Next page button
+        val buttonNewPage = findViewById<Button>(R.id.newPageButton)
+        buttonNewPage.setOnClickListener {
+
+            val newPageBundle = Bundle()
+            newPageBundle.putIntegerArrayList("key", amplitudes)
+            val intent = Intent(this, NewPage::class.java)
+            intent.putExtras(newPageBundle)
+
+            startActivity(intent)
+        }
+
     }
 
     //functia care este lansata la cererea permisiunilor
@@ -285,12 +299,12 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         var indexul:Int = 0
         for (i:Int in amplitudesTemp){
             //println(indexul)
-            DP1=DataPoint(indexul.toDouble(),i.toDouble())
-            series.appendData(DP1,true,90)
+            DP1=DataPoint(indexul.toDouble(), i.toDouble())
+            series.appendData(DP1, true, 90)
             indexul++
         }
 
-        println("Numar esantioane: "+indexul)
+        println("Numar esantioane: " + indexul)
 
         var graph: GraphView = findViewById(R.id.graph)
 

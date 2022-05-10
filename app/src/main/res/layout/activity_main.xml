@@ -85,4 +85,17 @@
 
         />
 
+    <!-- New Page Button -->
+    <Button
+        android:id="@+id/newPageButton"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="120dp"
+        android:layout_marginLeft="120dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/teal_200"
+        android:text="New page"
+        app:layout_constraintTop_toBottomOf="@id/graph"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
