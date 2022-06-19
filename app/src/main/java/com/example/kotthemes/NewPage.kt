@@ -189,6 +189,59 @@ class NewPage : AppCompatActivity() {
             j++
         }
 
+        //TODO Canvas Spectrogram ----------------------------------------------------------------
 
+        //variabilele pentru canvas si bitmap
+        val imageSP = findViewById<View>(R.id.imageSpectrogram)
+
+        val bitmapSP: Bitmap = Bitmap.createBitmap(1000, 600, Bitmap.Config.ARGB_8888)
+        val canvasSP: Canvas = Canvas(bitmapSP)
+
+        val drawingListSP = mutableListOf<Float>()
+
+        //Desenam dreptunghiul care delimiteaza canvasul
+
+        // first line starting point x y
+        drawingListSP.add(0F) // x
+        drawingListSP.add(0F) // y
+        // first line ending point x y
+        drawingListSP.add(canvas.width + 0F)
+        drawingListSP.add(0F)
+
+        drawingListSP.add(0F) // x
+        drawingListSP.add(0F) // y
+        drawingListSP.add(0F)
+        drawingListSP.add(canvas.height + 0F)
+
+        drawingListSP.add(0F) // x
+        drawingListSP.add(canvas.height + 0F) // y
+        drawingListSP.add(canvas.width + 0F)
+        drawingListSP.add(canvas.height + 0F)
+
+        drawingListSP.add(canvas.width + 0F) // x
+        drawingListSP.add(0F) // y
+        drawingListSP.add(canvas.width + 0F)
+        drawingListSP.add(canvas.height + 0F)
+
+        canvasSP.drawLines(drawingListSP.toFloatArray(),paint)
+
+        //Atributele de culoare/grosime ale punctelor ce vor fi reprezentate
+        val paintSP = Paint().apply {
+            color = Color.parseColor("#03fc35")
+            strokeWidth = 5F
+            style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.BUTT
+            strokeMiter = 2F
+        }
+
+        paintSP.color = Color.rgb(255,255,0)
+
+        canvasSP.drawPoint(300F, 300F,paintSP)
+
+        paintSP.color = Color.rgb(255,0,0)
+
+        canvasSP.drawPoint(305F, 300F,paintSP)
+
+        imageSP.background = BitmapDrawable(getResources(), bitmapSP)
     }
 }
