@@ -5,6 +5,8 @@ import android.R.attr.key
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.AudioFormat
+import android.media.AudioRecord
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -44,6 +46,11 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
     //TIMER audio amplitudes
     var amplitudes = ArrayList<Int>()
     var amplitudesTemp = ArrayList<Int>()
+
+    //TODO: AudioRecord pentru spectrograma
+
+    var bufferSizeInFloats2 = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT)
+    val record2AudioRecordFloats = AudioRecord(MediaRecorder.AudioSource.MIC,16000,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_FLOAT,bufferSizeInFloats2)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -261,6 +268,11 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
 
         //TIMER pornim timerul
         timer.start()
+
+        //TODO AudioRecord pentru Spectrograma
+
+        record2AudioRecordFloats.startRecording()
+
     }
 
     //redarea inregistrarii
@@ -322,6 +334,26 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener{
         graph.viewport.setScalable(true)
 
         graph.addSeries(series)
+
+        //TODO AudioRecord pentru Spectrograma
+
+        var lengthAudioRecFloat : Int = 0
+        var sampleuriFloats = FloatArray(15600)
+
+        lengthAudioRecFloat = record2AudioRecordFloats.read(sampleuriFloats,0,15600,AudioRecord.READ_NON_BLOCKING)
+        println("Length2 Floats Record Read")
+        println(lengthAudioRecFloat)
+
+        var contor : Int = 0
+        while(contor < 200)
+        {
+            println(sampleuriFloats[contor])
+            contor++
+        }
+        println("Gata sampleurile")
+
+        record2AudioRecordFloats.stop()
+        record2AudioRecordFloats.release()
 
     }
 
