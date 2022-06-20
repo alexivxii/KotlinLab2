@@ -90,7 +90,7 @@ class NewPage : AppCompatActivity() {
         val canvas: Canvas = Canvas(bitmap)
 
         //Atributele de culoare/grosime ale liniilor ce vor fi reprezentate
-        val paint = Paint().apply {
+        var paint = Paint().apply {
             color = Color.parseColor("#545AA7")
             strokeWidth = 5F
             style = Paint.Style.STROKE
@@ -194,7 +194,7 @@ class NewPage : AppCompatActivity() {
         //variabilele pentru canvas si bitmap
         val imageSP = findViewById<View>(R.id.imageSpectrogram)
 
-        val bitmapSP: Bitmap = Bitmap.createBitmap(1000, 600, Bitmap.Config.ARGB_8888)
+        val bitmapSP: Bitmap = Bitmap.createBitmap(249, 64, Bitmap.Config.ARGB_8888)
         val canvasSP: Canvas = Canvas(bitmapSP)
 
         val drawingListSP = mutableListOf<Float>()
@@ -223,12 +223,20 @@ class NewPage : AppCompatActivity() {
         drawingListSP.add(canvas.width + 0F)
         drawingListSP.add(canvas.height + 0F)
 
+        paint = Paint().apply {
+            color = Color.parseColor("#545AA7")
+            strokeWidth = 1F
+            style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.BUTT
+            strokeMiter = 1F
+        }
+
         canvasSP.drawLines(drawingListSP.toFloatArray(),paint)
 
         //Atributele de culoare/grosime ale punctelor ce vor fi reprezentate
         val paintSP = Paint().apply {
             color = Color.parseColor("#03fc35")
-            strokeWidth = 5F
+            strokeWidth = 1F
             style = Paint.Style.STROKE
             strokeCap = Paint.Cap.BUTT
             strokeMiter = 2F
@@ -236,11 +244,11 @@ class NewPage : AppCompatActivity() {
 
         paintSP.color = Color.rgb(255,255,0)
 
-        canvasSP.drawPoint(300F, 300F,paintSP)
+        canvasSP.drawPoint(120F, 32F,paintSP)
 
         paintSP.color = Color.rgb(255,0,0)
 
-        canvasSP.drawPoint(305F, 300F,paintSP)
+        canvasSP.drawPoint(130F, 32F,paintSP)
 
         imageSP.background = BitmapDrawable(getResources(), bitmapSP)
     }
